@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Title</title>
+  </head>
+  <body>
+    <div style="height:650px">
+      <div id="screens-1" style="float:left;">INTERACTIVE<br></div>
+      <div id="screens-2" style="float:left;">NON-INTERACTIVE<br></div>
+    </div>
+    <select name="screen" id="select" onchange="setHeatmap()">
+      <option value="HOME"></option>
+    </select>
+    <input type="checkbox" id="check" name="background" checked onchange="setHeatmap()"/><label for="check">Include background</label>
+    <input type="checkbox" id="first" name="first" onchange="setHeatmap()" checked/><label for="first">Firstclick</label>
+    <input type="checkbox" id="second" name="second" onchange="setHeatmap()" checked/><label for="second">Second+ clicks</label>
+    <input type="checkbox" id="last" name="last" onchange="setHeatmap()"/><label for="last">Last clicks</label>
+    <input type="checkbox" id="t1" name="task" onchange="setHeatmap()" checked/><label for="t1">Task1</label>
+    <input type="checkbox" id="t2" name="task" onchange="setHeatmap()" checked/><label for="t2">Task2</label>
+    <input type="checkbox" id="t3" name="task" onchange="setHeatmap()" checked/><label for="t3">Task3</label>
+    <button onclick="downloadHeatmap()">Download</button>
+    <div id="heatmapContainer" style="position: relative;">
+        <div id="heatmap" style="height: 100%; width: 100%;">
+            <canvas id="background" style="position: absolute; left: 0px; top: 0px;"></canvas>
+        </div>
+    </div>
+    <script src="heatmap.js"></script>
+    <script src="data.js"></script>
+    <script>
+      let heatmap;
+
+      window.onload = () => {
+        let select = document.querySelector('#select');
+        let screens1 = document.querySelector('#screens-1');
+        let screens2 = document.querySelector('#screens-2');
+        let count = 0;
+        for (const [key, value] of Object.entries(DATA_INTERACTIVE)) {
+          let option = document.createElement('option');
+          option.value = key;
+          option.innerText = key;
+          let input = document.createElement('input');
+          let label = document.createElement('label');
+          input.type="checkbox";
+          input.name="screen";
+          input.id=key+'-i';
+          label.innerHTML = key;
+          label.htmlFor=key+'-i';
+          input.onchange = () => setHeatmap();
+          screens1.appendChild(input);
+          screens1.appendChild(label);
+          screens1.appendChild(document.createElement('br'));
+          select.appendChild(option)
+        }
+        for (const [key, value] of Object.entries(DATA_NON_INTERACTIVE)) {
+          let input = document.createElement('input');
+          let label = document.createElement('label');
+          input.type="checkbox";
+          input.name="screen";
+          input.id=key+'-n';
+          label.innerHTML = key;
+          label.htmlFor=key+'-n';
+          input.onchange = () => setHeatmap();
+          screens2.appendChild(input);
+          screens2.appendChild(label);
+          screens2.appendChild(document.createElement('br'));
+        }
+      }
+
+      function setHeatmap() {
+        let select = document.querySelector('#select');
+        let check = document.querySelector('#check');
+        let radio = Array.from(document.querySelectorAll('input[name="screen"]:checked')).map(x=>x.id);
+        let first = document.querySelector('#first');
+        let second = document.querySelector('#second');
+        let last = document.querySelector('#last');
+        let tasks = Array.from(document.querySelectorAll('input[name="task"]:checked')).map(x=>x.id);
+        setHeatmapContent(select.options[select.selectedIndex].value, check.checked, radio, first.checked, second.checked, last.checked, tasks);
+      }
+
+      function setHeatmapContent(background, backgroundCheck, screens, first, second, last, tasks) {
+        let data1;
+        let data2;
+
+        let screens1 = []
+        screens.filter(x=>x.endsWith('-i')).forEach(x=>{screens1.push(x.split('-i')[0])})
+        let screens2 = []
+        screens.filter(x=>x.endsWith('-n')).forEach(x=>{screens2.push(x.split('-n')[0])})
+
+        data1 = Object.fromEntries(Object.entries(DATA_INTERACTIVE).filter(([k,v]) => screens1.includes(k)));
+        data2 = Object.fromEntries(Object.entries(DATA_NON_INTERACTIVE).filter(([k,v]) => screens2.includes(k)));
+
+        let container = document.querySelector('#heatmapContainer');
+        let maxHeight = DATA_INTERACTIVE[background]['height'];
+        let maxWidth = DATA_INTERACTIVE[background]['width'];
+        let all_points = [];
+        let dataPoints = [];
+
+        // for (const [key, value] of Object.entries(Object.assign({}, data1, data2))) {
+        //   if (maxHeight < value.height) maxHeight = value.height
+        //   if (maxWidth < value.width) maxWidth = value.width
+        // }
+
+        for (const [key, value] of Object.entries(data1)) {
+            dataPoints = dataPoints.concat(value.points)
+        }
+        for (const [key, value] of Object.entries(data2)) {
+            dataPoints = dataPoints.concat(value.points)
+        }
+
+        let mapped = tasks.map(x=>Number(x[1]))
+
+        dataPoints = dataPoints.filter(x=>{
+          return mapped.includes(x['task'])
+        })
+
+        if((first && !second && last)){
+          dataPoints = dataPoints.filter(x=>{
+            return x['firstClick']==1 || x['lastClick']==1
+          })
+        }
+        if((first && !second && !last)){
+          dataPoints = dataPoints.filter(x=>{
+            return x['firstClick']==1
+          })
+        }
+        if((!first && second)){
+          dataPoints = dataPoints.filter(x=>{
+            return x['firstClick']==0
+          })
+        }
+        if((!first && !second && last)){
+          dataPoints = dataPoints.filter(x=>{
+            return x['lastClick']==1
+          })
+        }
+        if((!first && !second && !last)){
+          dataPoints = dataPoints.filter(x=>{
+            return false
+          })
+        }
+        
+        console.log(dataPoints)
+
+        container.style.height = String(maxHeight) + 'px';
+        container.style.width = String(maxWidth) + 'px';
+
+        if(backgroundCheck) {
+          try {
+            container.style.backgroundImage = 'url(img/' + background + ".png" + ')';
+          } catch {}
+        }
+        else {
+          container.style.backgroundImage = 'none';
+        }
+
+        if(heatmap){
+          heatmap.repaint()
+        }
+         else {
+            heatmap = h337.create({
+              container: document.getElementById('heatmap'),
+              radius: 30,
+              maxOpacity: .9,
+              blur: .9
+            });
+        }
+
+        let canvas = document.querySelector('canvas.heatmap-canvas');
+        canvas.width  = maxWidth;
+        canvas.height = maxHeight;
+
+        // if(backgroundCheck) {
+        //   let canvas = document.querySelector('canvas#background');
+        //   canvas.width  = maxWidth;
+        //   canvas.height = maxHeight;
+        //   let context = canvas.getContext('2d');
+        //   base_image = new Image();
+        //   try{
+        //     base_image.src = background + ".png";
+        //   } catch{}
+          
+        //   base_image.onload = function() {
+        //     context.drawImage(base_image, 0, 0);
+        //   }
+        // }
+        
+        if(dataPoints.length>0){
+          heatmap.setData({
+            max: 2,
+            min: 0,
+            data: dataPoints
+          })
+        }
+        else{
+          heatmap.setData({data:[]})
+        }
+
+        
+      }
+
+      function downloadHeatmap() {
+        let id = "downloadLink";
+        let link = document.querySelector('#' + id);
+        if(link == null) {
+          link = document.createElement('a');
+          link.id = id;
+        }
+        let canvas = document.querySelector('canvas');
+        link.download = 'heatmap.png';
+        link.href = canvas.toDataURL()
+        link.click();
+      }
+    </script>
+  </body>
+</html>
