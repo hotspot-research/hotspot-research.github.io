@@ -96,11 +96,6 @@
         let all_points = [];
         let dataPoints = [];
 
-        // for (const [key, value] of Object.entries(Object.assign({}, data1, data2))) {
-        //   if (maxHeight < value.height) maxHeight = value.height
-        //   if (maxWidth < value.width) maxWidth = value.width
-        // }
-
         for (const [key, value] of Object.entries(data1)) {
             dataPoints = dataPoints.concat(value.points)
         }
@@ -166,15 +161,6 @@
               maxOpacity: .5
             });
         }
-
-        // this.$props.points.forEach(p => {
-        //   let str = `${Number(p.x * this.container.width).toFixed(0)}-${Number(p.y * this.container.height).toFixed(0)}`;
-        //   if (!tmp.hasOwnProperty(str)) {
-        //     tmp[str] = 0;
-        //   }
-        //   tmp[str]++;
-        //   if (tmp[str] > max) max = tmp[str];
-        // });
 
         let canvas = document.querySelector('canvas.heatmap-canvas');
         canvas.width  = maxWidth;
