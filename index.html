@@ -154,17 +154,27 @@
           container.style.backgroundImage = 'none';
         }
 
+
+
         if(heatmap){
           heatmap.repaint()
         }
          else {
             heatmap = h337.create({
               container: document.getElementById('heatmap'),
-              radius: 30,
-              maxOpacity: .9,
-              blur: .9
+              radius: 35,
+              maxOpacity: .5
             });
         }
+
+        // this.$props.points.forEach(p => {
+        //   let str = `${Number(p.x * this.container.width).toFixed(0)}-${Number(p.y * this.container.height).toFixed(0)}`;
+        //   if (!tmp.hasOwnProperty(str)) {
+        //     tmp[str] = 0;
+        //   }
+        //   tmp[str]++;
+        //   if (tmp[str] > max) max = tmp[str];
+        // });
 
         let canvas = document.querySelector('canvas.heatmap-canvas');
         canvas.width  = maxWidth;
@@ -184,19 +194,29 @@
         //     context.drawImage(base_image, 0, 0);
         //   }
         // }
+
+        let tmp = {}
+        let max = 0;
+
+        dataPoints.forEach(p => {
+           let str = `${Number(p['x']).toFixed(0)}-${Number(p['y']).toFixed(0)}`;
+           if (!tmp.hasOwnProperty(str)) {
+             tmp[str] = 0;
+           }
+           tmp[str]++;
+           if (tmp[str] > max) max = tmp[str];
+        });
+
         
         if(dataPoints.length>0){
           heatmap.setData({
-            max: 2,
-            min: 0,
+            max: max,
             data: dataPoints
           })
         }
         else{
           heatmap.setData({data:[]})
         }
-
-        
       }
 
       function downloadHeatmap() {
