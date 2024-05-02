@@ -6,18 +6,20 @@
   </head>
   <body>
     <div style="height:650px">
-      
       <div id="screens-1" style="float:left;">INTERACTIVE mouse data<br></div>
       <div id="screens-2" style="float:left;">NON-INTERACTIVE mouse data<br></div>
     </div>
     BACKGROUND:
     <select name="screen" id="select" onchange="setHeatmap()">
-      <option value="HOME"></option>
-    </select>&nbsp;&nbsp;
+    </select>
+    &nbsp;&nbsp;
     CUSTOM:
     <input type="text" id="myBackground" name="myBackground"><button onclick="setHeatmap()">SET</button>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;
     <input type="checkbox" id="check" name="background" checked onchange="setHeatmap()"/><label for="check">Include background</label>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input type="radio" id="type-heatmap" name="type" value="type-heatmap" checked onclick="setHeatmap()"><label for="type-heatmap">Heatmap</label>
+    <input type="radio" id="type-clickmap" name="type" value="type-clickmap" onclick="setHeatmap()"><label for="type-clickmap">Clickmap</label>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <input type="checkbox" id="first" name="first" onchange="setHeatmap()" checked/><label for="first">First-clicks</label>
     <input type="checkbox" id="second" name="second" onchange="setHeatmap()" checked/><label for="second">None-first-clicks</label>
@@ -29,9 +31,7 @@
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <button onclick="downloadHeatmap()">Download</button>
     <div id="heatmapContainer" style="position: relative;">
-        <div id="heatmap" style="height: 100%; width: 100%;">
-            <canvas id="background" style="position: absolute; left: 0px; top: 0px;"></canvas>
-        </div>
+      <canvas id="clickmap"></canvas>
     </div>
     <div><canvas id="export" style="display: none;"></canvas></div>
     <script src="heatmap.js"></script>
@@ -40,49 +40,58 @@
       let heatmap;
 
       window.onload = () => {
-        let select = document.querySelector('#select');
-        let screens1 = document.querySelector('#screens-1');
-        let screens2 = document.querySelector('#screens-2');
-        let count = 0;
+        let backgroundSelect = document.querySelector('#select');
+        let screens1Div = document.querySelector('#screens-1');
+        let screens2Div = document.querySelector('#screens-2');
+        
         for (const [key, value] of Object.entries(DATA_INTERACTIVE)) {
           let option = document.createElement('option');
           option.value = key;
           option.innerText = key;
+
           let input = document.createElement('input');
-          let label = document.createElement('label');
           input.type="checkbox";
           input.name="screen";
           input.id=key+'-i';
+          input.onchange = () => setHeatmap();
+
+          let label = document.createElement('label');
           label.innerHTML = key;
           label.htmlFor=key+'-i';
-          input.onchange = () => setHeatmap();
-          screens1.appendChild(input);
-          screens1.appendChild(label);
-          screens1.appendChild(document.createElement('br'));
-          select.appendChild(option)
+          
+          screens1Div.appendChild(input);
+          screens1Div.appendChild(label);
+          screens1Div.appendChild(document.createElement('br'));
+          backgroundSelect.appendChild(option);
         }
+
+        backgroundSelect.selectedIndex = Array.from(backgroundSelect).map(x=>x.value).findIndex(x=>x=='HOME');
+
         for (const [key, value] of Object.entries(DATA_NON_INTERACTIVE)) {
           let input = document.createElement('input');
-          let label = document.createElement('label');
           input.type="checkbox";
           input.name="screen";
           input.id=key+'-n';
+          input.onchange = () => setHeatmap();
+
+          let label = document.createElement('label');
           label.innerHTML = key;
           label.htmlFor=key+'-n';
-          input.onchange = () => setHeatmap();
-          screens2.appendChild(input);
-          screens2.appendChild(label);
-          screens2.appendChild(document.createElement('br'));
+          
+          screens2Div.appendChild(input);
+          screens2Div.appendChild(label);
+          screens2Div.appendChild(document.createElement('br'));
         }
       }
 
       function setHeatmap() {
-        let select = document.querySelector('#select');
-        let check = document.querySelector('#check');
-        let radio = Array.from(document.querySelectorAll('input[name="screen"]:checked')).map(x=>x.id);
-        let first = document.querySelector('#first');
-        let second = document.querySelector('#second');
-        let last = document.querySelector('#last');
+
+        let backgroundSelect = document.querySelector('#select');
+        let backgroundCheck = document.querySelector('#check').checked;
+        let screenCheckboxes = Array.from(document.querySelectorAll('input[name="screen"]:checked')).map(x=>x.id);
+        let first = document.querySelector('#first').checked;
+        let second = document.querySelector('#second').checked;
+        let last = document.querySelector('#last').checked;
         let tasks = Array.from(document.querySelectorAll('input[name="task"]:checked')).map(x=>x.id);
 
         let background = select.options[select.selectedIndex].value;
@@ -90,11 +99,13 @@
         if(myBackground && myBackground != ""){
           background = myBackground
         }
-        console.log(myBackground)
-        setHeatmapContent(background, check.checked, radio, first.checked, second.checked, last.checked, tasks);
+
+        let type = document.querySelector('input[name="type"]:checked').value;
+
+        setHeatmapContent(background, backgroundCheck, screenCheckboxes, first, second, last, tasks, type);
       }
 
-      function setHeatmapContent(background, backgroundCheck, screens, first, second, last, tasks) {
+      function getHeatmapData(screens, first, second, last, tasks) {
         let data1;
         let data2;
 
@@ -106,10 +117,6 @@
         data1 = Object.fromEntries(Object.entries(DATA_INTERACTIVE).filter(([k,v]) => screens1.includes(k)));
         data2 = Object.fromEntries(Object.entries(DATA_NON_INTERACTIVE).filter(([k,v]) => screens2.includes(k)));
 
-        let container = document.querySelector('#heatmapContainer');
-        let maxHeight = DATA_INTERACTIVE[background]['height'];
-        let maxWidth = DATA_INTERACTIVE[background]['width'];
-        let all_points = [];
         let dataPoints = [];
 
         for (const [key, value] of Object.entries(data1)) {
@@ -150,29 +157,22 @@
             return false
           })
         }
-        
         console.log(dataPoints)
+        return dataPoints
+      }
 
-        container.style.height = String(maxHeight) + 'px';
-        container.style.width = String(maxWidth) + 'px';
+      function printHeatmap(dataPoints, maxWidth, maxHeight, container) {
 
-        if(backgroundCheck) {
-          try {
-            container.style.backgroundImage = 'url(img/' + background + ".png" + ')';
-          } catch {}
-        }
-        else {
-          container.style.backgroundImage = 'none';
-        }
-
-
+        let clickCanvas = document.querySelector('#clickmap');
+        let clickCtx = clickCanvas.getContext('2d');
+        clickCtx.clearRect(0, 0, clickCanvas.width, clickCanvas.height);
 
         if(heatmap){
           heatmap.repaint()
         }
          else {
             heatmap = h337.create({
-              container: document.getElementById('heatmap'),
+              container: container,
               radius: 35,
               maxOpacity: .5
             });
@@ -195,9 +195,7 @@
            tmp[str]++;
            if (tmp[str] > max) max = tmp[str];
         });
-        console.log(tmp)
 
-        
         if(dataPoints.length>0){
           heatmap.setData({
             max: max,
@@ -206,6 +204,48 @@
         }
         else{
           heatmap.setData({data:[]})
+        }
+      }
+
+      function printClickMap(dataPoints, maxWidth, maxHeight, container) {
+        if(heatmap) heatmap.setData({data:[]})
+        let canvas = document.querySelector('#clickmap');
+        canvas.width = maxWidth;
+        canvas.height = maxHeight;
+        let ctx = canvas.getContext('2d');
+        ctx.font = "10px serif";
+        
+        dataPoints.forEach(point => {
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, 8, 0, 2 * Math.PI);
+          ctx.fillStyle = "yellow";
+          ctx.fill();
+          ctx.stroke();
+        })
+      }
+
+      function setHeatmapContent(background, backgroundCheck, screens, first, second, last, tasks, type) {
+        let container = document.querySelector('#heatmapContainer');
+        let maxHeight = DATA_INTERACTIVE[background]['height'];
+        let maxWidth = DATA_INTERACTIVE[background]['width'];
+        container.style.height = String(maxHeight) + 'px';
+        container.style.width = String(maxWidth) + 'px';
+
+        if(backgroundCheck) {
+          try {
+            container.style.backgroundImage = 'url(img/' + background + ".png" + ')';
+          } catch {}
+        }
+        else {
+          container.style.backgroundImage = 'none';
+        }
+
+        dataPoints = getHeatmapData(screens, first, second, last, tasks);
+        if(type=="type-heatmap") {
+          printHeatmap(dataPoints, maxWidth, maxHeight, container)
+        }
+        else if(type=="type-clickmap"){
+          printClickMap(dataPoints, maxWidth, maxHeight, container)
         }
       }
 
@@ -218,6 +258,7 @@
         }
         let maxHeight = DATA_INTERACTIVE[background]['height'];
         let maxWidth = DATA_INTERACTIVE[background]['width'];
+        let type = document.querySelector('input[name="type"]:checked').value;
         
         let canvas = document.querySelector('canvas#export');
         canvas.style.display = 'block';
@@ -227,7 +268,6 @@
         canvas.height = maxHeight;
 
         if(backgroundCheck) {
-          console.log('ddd')
           base_image = new Image();
           try{
             base_image.src = 'img/' + background + ".png";
@@ -235,7 +275,13 @@
           
           base_image.onload = function() {
             context.drawImage(base_image, 0, 0);
-            context.drawImage(document.querySelector("canvas.heatmap-canvas"),0,0)
+            if(type=="type-heatmap"){
+              context.drawImage(document.querySelector("canvas.heatmap-canvas"),0,0)
+            }
+            else if(type=="type-clickmap"){
+              context.drawImage(document.querySelector("canvas#clickmap"),0,0)
+            }
+            
             let id = "downloadLink";
             let link = document.querySelector('#' + id);
             if(link == null) {
@@ -249,7 +295,14 @@
           }
         }
         else{
-          context.drawImage(document.querySelector("canvas.heatmap-canvas"),0,0)
+          context.drawImage(document.querySelector("canvas.heatmap-canvas"),0,0);
+          if(type=="type-heatmap"){
+            context.drawImage(document.querySelector("canvas.heatmap-canvas"),0,0)
+          }
+          else if(type=="type-clickmap"){
+            context.drawImage(document.querySelector("canvas#clickmap"),0,0)
+          }
+          
           let id = "downloadLink";
           let link = document.querySelector('#' + id);
           if(link == null) {
@@ -261,8 +314,6 @@
           link.click();
           canvas.style.display = 'none';
         }
-        
-        
       }
     </script>
   </body>
