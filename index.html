@@ -5,19 +5,20 @@
     <title>Title</title>
   </head>
   <body>
-    <div style="height:650px">
-      <div id="screens-1" style="float:left;">INTERACTIVE mouse data<br></div>
-      <div id="screens-2" style="float:left;">NON-INTERACTIVE mouse data<br></div>
+    <div style="height:700px">
+      <div id="screens-1" style="float:left; padding-right:150px;"><b>INTERACTIVE-variant mouse data</b><br><a href="https://www.figma.com/proto/HumyDETYixChKKwf6W8KZi/Hotspots-interactive?type=design&node-id=0-1&t=0iCwar1dSgYXQkLE-0&scaling=min-zoom&page-id=0%3A1&starting-point-node-id=108%3A3618&show-proto-sidebar=1">Prototype</a><br>Data to include:<br></div>
+      <div id="screens-2" style="float:left;"><b>NON-INTERACTIVE-variant mouse data</b><br><a href="https://www.figma.com/proto/9MTV4BQNbyoBhAsB5j2qij/Hotspots-not-interactive?type=design&node-id=108-3618&t=4uKSaKvyFBlh8tEP-1&scaling=min-zoom&page-id=0%3A1&starting-point-node-id=108%3A3618&show-proto-sidebar=1&mode=design">Prototype</a><br>Data to include:<br></div>
     </div>
-    BACKGROUND:
+    Background:
     <select name="screen" id="select" onchange="setHeatmap()">
     </select>
     &nbsp;&nbsp;
-    CUSTOM:
-    <input type="text" id="myBackground" name="myBackground"><button onclick="setHeatmap()">SET</button>
+    Custom background:
+    <input type="text" id="myBackground" name="myBackground"><button onclick="setHeatmap()">Set</button>
     &nbsp;&nbsp;
-    <input type="checkbox" id="check" name="background" checked onchange="setHeatmap()"/><label for="check">Include background</label>
+    <input type="checkbox" id="check" name="background" checked onchange="setHeatmap()"/><label for="check">Display background</label>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <br><br>
     <input type="radio" id="type-heatmap" name="type" value="type-heatmap" checked onclick="setHeatmap()"><label for="type-heatmap">Heatmap</label>
     <input type="radio" id="type-clickmap" name="type" value="type-clickmap" onclick="setHeatmap()"><label for="type-clickmap">Clickmap</label>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -25,9 +26,9 @@
     <input type="checkbox" id="second" name="second" onchange="setHeatmap()" checked/><label for="second">None-first-clicks</label>
     <input type="checkbox" id="last" name="last" onchange="setHeatmap()"/><label for="last">Last-clicks</label>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <input type="checkbox" id="t1" name="task" onchange="setHeatmap()" checked/><label for="t1">Task1</label>
-    <input type="checkbox" id="t2" name="task" onchange="setHeatmap()" checked/><label for="t2">Task2</label>
-    <input type="checkbox" id="t3" name="task" onchange="setHeatmap()" checked/><label for="t3">Task3</label>
+    <input type="checkbox" id="t1" name="task" onchange="setHeatmap()" checked/><label for="t1">Task 1</label>
+    <input type="checkbox" id="t2" name="task" onchange="setHeatmap()" checked/><label for="t2">Task 2</label>
+    <input type="checkbox" id="t3" name="task" onchange="setHeatmap()" checked/><label for="t3">Task 3</label>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <button onclick="downloadHeatmap()">Download</button>
     <div id="heatmapContainer" style="position: relative;">
