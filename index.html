@@ -14,7 +14,20 @@
     </select>
     &nbsp;&nbsp;
     Custom background:
-    <input type="text" id="myBackground" name="myBackground"><button onclick="setHeatmap()">Set</button>
+    <input type="text" id="myBackground" name="myBackground"><button onclick="setHeatmap()">Set</button> 
+    <span 
+      onmouseover="document.querySelector('#tip').style.display='block'" 
+      style="position: relative;"
+      onmouseleave="document.querySelector('#tip').style.display='none'"
+    >
+      <b>?</b>
+      <div id="tip" style="position: absolute; display:none; left:0; top:-60px; background-color: lightgray; width: 200px; padding:10px;">
+        TSHIRTS-ALL<br>
+        TSHIRTS-SIZES<br>
+        WISHLIST-ADDED<br>
+        CART-BOUGHT
+      </div>
+    </span>
     &nbsp;&nbsp;
     <input type="checkbox" id="check" name="background" checked onchange="setHeatmap()"/><label for="check">Display background</label>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -31,6 +44,7 @@
     <input type="checkbox" id="t3" name="task" onchange="setHeatmap()" checked/><label for="t3">Task 3</label>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <button onclick="downloadHeatmap()">Download</button>
+    <br><br>
     <div id="heatmapContainer" style="position: relative;">
       <canvas id="clickmap"></canvas>
     </div>
@@ -219,7 +233,7 @@
         dataPoints.forEach(point => {
           ctx.beginPath();
           ctx.arc(point.x, point.y, 8, 0, 2 * Math.PI);
-          ctx.fillStyle = "yellow";
+          ctx.fillStyle = "rgba(255, 255, 0, 0.7)";
           ctx.fill();
           ctx.stroke();
         })
@@ -227,8 +241,17 @@
 
       function setHeatmapContent(background, backgroundCheck, screens, first, second, last, tasks, type) {
         let container = document.querySelector('#heatmapContainer');
-        let maxHeight = DATA_INTERACTIVE[background]['height'];
-        let maxWidth = DATA_INTERACTIVE[background]['width'];
+        let maxHeight;
+        let maxWidth;
+        if(DATA_INTERACTIVE[background]){
+          maxHeight = DATA_INTERACTIVE[background]['height'];
+          maxWidth = DATA_INTERACTIVE[background]['width'];
+        }
+        else{
+          maxHeight = DATA_INTERACTIVE[background.split('-')[0]]['height'];
+          maxWidth = DATA_INTERACTIVE[background.split('-')[0]]['width'];
+        }
+        
         container.style.height = String(maxHeight) + 'px';
         container.style.width = String(maxWidth) + 'px';
 
