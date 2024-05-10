@@ -347,58 +347,59 @@
 
       function analysis_print(dataPoints, ctx, maxWidth, maxHeight) {
         areas = [
-          { name: "login", x: 1460, y: 60, x2: 1520, y2: 110 },
-          { name: "signup", x: 1520, y: 60, x2: 1590, y2: 110 },
-          { name: "star", x: 1590, y: 60, x2: 1630, y2: 110 },
-          { name: "cart", x: 1630, y: 60, x2: 1670, y2: 110 },
-          { name: "search", x: 1070, y: 60, x2: 1440, y2: 110 },
-          { name: "new", x: 240, y: 130, x2: 415, y2: 195 },
-          { name: "tshirts", x: 415, y: 130, x2: 520, y2: 195 },
-          { name: "hoodies", x: 520, y: 130, x2: 640, y2: 195 },
-          { name: "shoes", x: 640, y: 130, x2: 735, y2: 195 },
-          { name: "access", x: 735, y: 130, x2: 880, y2: 195 },
-          { name: "home", x: 240, y: 50, x2: 520, y2: 120 },
-          { name: "discounts", x: 1080, y: 10, x2: 1190, y2: 30 },
-          { name: "banner", x: 260, y: 255, x2: 1665, y2: 640 },
-          { name: "home-t1", x: 970, y: 775, x2: 1290, y2: 1240 },
-          { name: "home-t2", x: 630, y: 1715, x2: 950, y2: 2180 },
-          { name: "home-about", x: 920, y: 2280, x2: 1100, y2: 2480 },
-          { name: "cart-checkout", x: 1510, y: 310, x2: 1630, y2: 360 },
-          { name: "prof-over", x: 280, y: 340, x2: 385, y2: 380 },
-          { name: "prof-purch", x: 385, y: 340, x2: 535, y2: 380 },
-          { name: "prof-acc", x: 535, y: 340, x2: 680, y2: 380 },
-          { name: "prof-refu", x: 680, y: 340, x2: 775, y2: 380 },
-          { name: "prof-retu", x: 775, y: 340, x2: 875, y2: 380 },
-          { name: "prof-faq", x: 875, y: 340, x2: 950, y2: 380 },
-          { name: "prof-supp", x: 950, y: 340, x2: 1040, y2: 380 },
-          { name: "t-star", x: 1530, y: 695, x2: 1575, y2: 740 },
-          { name: "t-col-black", x: 1120, y: 820, x2: 1160, y2: 865 },
-          { name: "t-buy", x: 1080, y: 965, x2: 1170, y2: 1015 },
-          { name: "t-size", x: 1140, y: 905, x2: 1195, y2: 950 },
-          { name: "t-return", x: 920, y: 2110, x2: 1100, y2: 2150 },
-          { name: "home-return", x: 920, y: 2390, x2: 1100, y2: 2425 },
-          { name: "wish-item", x: 290, y: 315, x2: 1235, y2: 565 },
-          { name: "wish-buy", x: 1145, y: 505, x2: 1180, y2: 545 },
-          { name: "ts-sort", x: 1495, y: 1315, x2: 1615, y2: 1350 },
-          { name: "ts-cols", x: 310, y: 1425, x2: 420, y2: 1460 },
-          { name: "ts-col-black", x: 305, y: 1470, x2: 345, y2: 1510 },
-          { name: "ts-sizes", x: 310, y: 1520, x2: 420, y2: 1555 },
-          { name: "ts-s-showall", x: 955, y: 2810, x2: 1275, y2: 3270 },
-          { name: "ts-s-filter", x: 615, y: 2330, x2: 935, y2: 2790 },
-          { name: "ts-s-sort", x: 615, y: 1855, x2: 935, y2: 2315 },
-          { name: "ts-s-sortfilter", x: 615, y: 1375, x2: 935, y2: 1835 },
-          { name: "purch-item", x: 315, y: 460, x2: 1260, y2: 630 },
+          { name: "login", fullName: "header-login-link", x: 1460, y: 60, x2: 1520, y2: 110 },
+          { name: "signup", fullName: "header-signup-link", x: 1520, y: 60, x2: 1590, y2: 110 },
+          { name: "star", fullName: "header-star-icon", x: 1590, y: 60, x2: 1630, y2: 110 },
+          { name: "cart", fullName: "header-cart-icon", x: 1630, y: 60, x2: 1670, y2: 110 },
+          { name: "search", fullName: "header-seach-field", x: 1070, y: 60, x2: 1440, y2: 110 },
+          { name: "new", fullName: "nav-new-collections-link", x: 240, y: 130, x2: 415, y2: 195 },
+          { name: "tshirts", fullName: "nav-tshirts-link", x: 415, y: 130, x2: 520, y2: 195 },
+          { name: "hoodies", fullName: "nav-hobbies-link", x: 520, y: 130, x2: 640, y2: 195 },
+          { name: "shoes", fullName: "nav-shoes-link", x: 640, y: 130, x2: 735, y2: 195 },
+          { name: "access", fullName: "nav-accessories-link", x: 735, y: 130, x2: 880, y2: 195 },
+          { name: "home", fullName: "home-logo", x: 240, y: 50, x2: 520, y2: 120 },
+          { name: "discounts", fullName: "header-discounts-link", x: 1080, y: 10, x2: 1190, y2: 30 },
+          { name: "banner", fullName: "ad-banner", x: 260, y: 255, x2: 1665, y2: 640 },
+          { name: "home-t1", fullName: "home-wrong-black-tshirt", x: 970, y: 775, x2: 1290, y2: 1240 },
+          { name: "home-t2", fullName: "home-wrong-black-tshirt-2", x: 630, y: 1715, x2: 950, y2: 2180 },
+          { name: "home-about", fullName: "home-footer-about-me", x: 920, y: 2280, x2: 1100, y2: 2480 },
+          { name: "cart-checkout", fullName: "cart-checkout-button", x: 1510, y: 310, x2: 1630, y2: 360 },
+          { name: "prof-over", fullName: "profile-nav-overview-link", x: 280, y: 340, x2: 385, y2: 380 },
+          { name: "prof-purch", fullName: "profile-nav-purchases-link", x: 385, y: 340, x2: 535, y2: 380 },
+          { name: "prof-acc", fullName: "profile-nav-account-link", x: 535, y: 340, x2: 680, y2: 380 },
+          { name: "prof-refu", fullName: "profile-nav-refunds-link", x: 680, y: 340, x2: 775, y2: 380 },
+          { name: "prof-retu", fullName: "profile-nav-returns-link", x: 775, y: 340, x2: 875, y2: 380 },
+          { name: "prof-faq", fullName: "profile-nav-faq-link", x: 875, y: 340, x2: 950, y2: 380 },
+          { name: "prof-supp", fullName: "profile-nav-support-link", x: 950, y: 340, x2: 1040, y2: 380 },
+          { name: "t-star", fullName: "tshirt-star-icon", x: 1530, y: 695, x2: 1575, y2: 740 },
+          { name: "t-col-black", fullName: "tshirt-black-color-picker", x: 1120, y: 820, x2: 1160, y2: 865 },
+          { name: "t-buy", fullName: "tshirt-buy-button", x: 1080, y: 965, x2: 1170, y2: 1015 },
+          { name: "t-size", fullName: "tshirt-S-size-picker", x: 1140, y: 905, x2: 1195, y2: 950 },
+          { name: "t-return", fullName: "tshirt-footer-return-policy-text", x: 920, y: 2110, x2: 1100, y2: 2150 },
+          { name: "home-return", fullName: "home-footer-return-policy-text", x: 920, y: 2390, x2: 1100, y2: 2425 },
+          { name: "wish-item", fullName: "wishlist-item", x: 290, y: 315, x2: 1235, y2: 565 },
+          { name: "wish-buy", fullName: "wishlist-buy-icon", x: 1145, y: 505, x2: 1180, y2: 545 },
+          { name: "ts-sort", fullName: "tshirts-sort-link", x: 1495, y: 1315, x2: 1615, y2: 1350 },
+          { name: "ts-cols", fullName: "tshirts-color-filter-link", x: 310, y: 1425, x2: 420, y2: 1460 },
+          { name: "ts-col-black", fullName: "tshirts-black-color-picker", x: 305, y: 1470, x2: 345, y2: 1510 },
+          { name: "ts-sizes", fullName: "tshirts-size-filter-link", x: 310, y: 1520, x2: 420, y2: 1555 },
+          { name: "ts-s-showall", fullName: "tshirts-tshirt-nosort-nofilter", x: 955, y: 2810, x2: 1275, y2: 3270 },
+          { name: "ts-s-filter", fullName: "tshirts-tshirt-onlyfilter", x: 615, y: 2330, x2: 935, y2: 2790 },
+          { name: "ts-s-sort", fullName: "tshirts-tshirt-onlysort", x: 615, y: 1855, x2: 935, y2: 2315 },
+          { name: "ts-s-sortfilter", fullName: "tshirts-tshirt-sort-filter", x: 615, y: 1375, x2: 935, y2: 1835 },
         ]
-        
+        let s = '';
         areas.forEach(area => {
-          let count = area['name'] +  ": " + dataPoints.filter(p => {
+          let count = dataPoints.filter(p => {
             return p['x'] >= area['x'] && p['x'] <= area['x2'] && p['y'] >= area['y'] && p['y'] <= area['y2']
           }).length.toString()
           ctx.beginPath()
           ctx.rect(area['x'], area['y'], area['x2'] - area['x'], area['y2'] - area['y']);
           ctx.stroke();
-          ctx.fillText(count, (area['x2'] + area['x'])/2, area['y2']+10);
+          ctx.fillText(area['name'] +  ": " + count, (area['x2'] + area['x'])/2, area['y2']+10);
+          if(count > 0) s += area['fullName'] + '\t' + count + '\n';
         })
+        console.log(s)
 
         for(let j = 0; j < maxHeight; j+=800){
           for(let i = 0; i < maxWidth; i++) {
