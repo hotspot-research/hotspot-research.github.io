@@ -67,7 +67,7 @@
           backgroundSelect.appendChild(option);
         }
 
-        ["TSHIRTS-ALL", "TSHIRTS-SIZES", "WISHLIST-ADDED", "CART-BOUGHT"].forEach(x => {
+        ["TSHIRTS-ALL", "TSHIRTS-SIZES", "WISHLIST-ADDED", "CART-BOUGHT", "PROFILE/RETURS-RETURNED"].forEach(x => {
           let option = document.createElement('option');
           option.value = x;
           option.innerText = x;
@@ -351,7 +351,7 @@
           { name: "signup", fullName: "header-signup-link", x: 1520, y: 60, x2: 1590, y2: 110 },
           { name: "star", fullName: "header-star-icon", x: 1590, y: 60, x2: 1630, y2: 110 },
           { name: "cart", fullName: "header-cart-icon", x: 1630, y: 60, x2: 1670, y2: 110 },
-          { name: "search", fullName: "header-seach-field", x: 1070, y: 60, x2: 1440, y2: 110 },
+          { name: "search", fullName: "header-search-field", x: 1070, y: 60, x2: 1440, y2: 110 },
           { name: "new", fullName: "nav-new-collections-link", x: 240, y: 130, x2: 415, y2: 195 },
           { name: "tshirts", fullName: "nav-tshirts-link", x: 415, y: 130, x2: 520, y2: 195 },
           { name: "hoodies", fullName: "nav-hobbies-link", x: 520, y: 130, x2: 640, y2: 195 },
@@ -362,7 +362,7 @@
           { name: "banner", fullName: "ad-banner", x: 260, y: 255, x2: 1665, y2: 640 },
           { name: "home-t1", fullName: "home-wrong-black-tshirt", x: 970, y: 775, x2: 1290, y2: 1240 },
           { name: "home-t2", fullName: "home-wrong-black-tshirt-2", x: 630, y: 1715, x2: 950, y2: 2180 },
-          { name: "home-about", fullName: "home-footer-about-me", x: 920, y: 2280, x2: 1100, y2: 2480 },
+          { name: "home-about", fullName: "home-footer-about-us", x: 920, y: 2280, x2: 1100, y2: 2480 },
           { name: "cart-checkout", fullName: "cart-checkout-button", x: 1510, y: 310, x2: 1630, y2: 360 },
           { name: "prof-over", fullName: "profile-nav-overview-link", x: 280, y: 340, x2: 385, y2: 380 },
           { name: "prof-purch", fullName: "profile-nav-purchases-link", x: 385, y: 340, x2: 535, y2: 380 },
@@ -387,6 +387,11 @@
           { name: "ts-s-filter", fullName: "tshirts-tshirt-onlyfilter", x: 615, y: 2330, x2: 935, y2: 2790 },
           { name: "ts-s-sort", fullName: "tshirts-tshirt-onlysort", x: 615, y: 1855, x2: 935, y2: 2315 },
           { name: "ts-s-sortfilter", fullName: "tshirts-tshirt-sort-filter", x: 615, y: 1375, x2: 935, y2: 1835 },
+          { name: "cont", fullName: "home-footer-contact-us", x: 255, y: 2335, x2: 430, y2: 2440 },
+          { name: "ts-more", fullName: "tshirts-see-more-button", x: 1060, y: 1855, x2: 1175, y2: 1900 },
+          { name: "bought-item", fullName: "profile-purchases-bought-item", x: 320, y: 470, x2: 1250, y2: 625 },
+          { name: "ret-item", fullName: "profile-returns-returned-item", x: 320, y: 490, x2: 1250, y2: 645 },
+          { name: "new-ret", fullName: "profile-returns-new-return", x: 1495, y: 415, x2: 1625, y2: 460 },
         ]
         let s = '';
         areas.forEach(area => {
