@@ -29,8 +29,12 @@
     <input type="checkbox" id="t2" name="task" onchange="setHeatmap()" checked/><label for="t2">Task 2</label>
     <input type="checkbox" id="t3" name="task" onchange="setHeatmap()" checked/><label for="t3">Task 3</label>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <input type="checkbox" id="only-40" name="only-40" onchange="setHeatmap()" checked/><label for="only-40">Only 40 respondents per-variant</label>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    FILTER:
+    <select name="custom-filter" id="custom-filter" onchange="setHeatmap()">
+      <option value="none">None</option>
+      <option value="t2-before-reg">TASK 2, before registration</option>
+      <option value="t2-after-reg">TASK 2, after registration</option>
+    </select>
     <br><br>
     <div id="heatmapContainer" style="position: relative;">
       <canvas id="clickmap"></canvas>
@@ -106,12 +110,13 @@
         let background = select.options[select.selectedIndex].value;
 
         let type = document.querySelector('input[name="type"]:checked').value;
-        let only40 = document.querySelector('#only-40').checked;
+        let filter = document.querySelector('#custom-filter');
+        let filterValue = filter.options[filter.selectedIndex].value;
 
-        setHeatmapContent(background, backgroundCheck, screenCheckboxes, first, second, last, tasks, type, only40);
+        setHeatmapContent(background, backgroundCheck, screenCheckboxes, first, second, last, tasks, type, filterValue);
       }
 
-      function getHeatmapData(screens, first, second, last, tasks, only40) {
+      function getHeatmapData(screens, first, second, last, tasks, filterValue) {
         let data1;
         let data2;
 
@@ -134,15 +139,22 @@
 
         let mapped = tasks.map(x=>Number(x[1]))
 
+        if(filterValue != 'none'){
+          if(filterValue == 't2-before-reg'){
+            dataPoints = dataPoints.filter(x=>{
+              return x['registeredT2'] == 0
+            })
+          }
+          if(filterValue == 't2-after-reg'){
+            dataPoints = dataPoints.filter(x=>{
+              return x['registeredT2'] == 1
+            })
+          }
+        }
+
         dataPoints = dataPoints.filter(x=>{
           return mapped.includes(x['task'])
         })
-
-        if(only40){
-          dataPoints = dataPoints.filter(x=>{
-            return x['filtered']==0
-          })
-        }
         
         if((first && !second && last)){
           dataPoints = dataPoints.filter(x=>{
@@ -245,7 +257,7 @@
         })
       }
 
-      function setHeatmapContent(background, backgroundCheck, screens, first, second, last, tasks, type, only40) {
+      function setHeatmapContent(background, backgroundCheck, screens, first, second, last, tasks, type, filterValue) {
         let container = document.querySelector('#heatmapContainer');
         let maxHeight;
         let maxWidth;
@@ -270,7 +282,7 @@
           container.style.backgroundImage = 'none';
         }
 
-        dataPoints = getHeatmapData(screens, first, second, last, tasks, only40);
+        dataPoints = getHeatmapData(screens, first, second, last, tasks, filterValue);
         if(type=="type-heatmap") {
           printHeatmap(dataPoints, maxWidth, maxHeight, container)
         }
@@ -392,6 +404,8 @@
           { name: "bought-item", fullName: "profile-purchases-bought-item", x: 320, y: 470, x2: 1250, y2: 625 },
           { name: "ret-item", fullName: "profile-returns-returned-item", x: 320, y: 490, x2: 1250, y2: 645 },
           { name: "new-ret", fullName: "profile-returns-new-return", x: 1495, y: 415, x2: 1625, y2: 460 },
+          { name: "login-btn", fullName: "login-button", x: 1042, y: 538, x2: 1138, y2: 580 },
+          { name: "reg-btn", fullName: "register-button", x: 960, y: 608, x2: 1138, y2: 650 },
         ]
         let s = '';
         areas.forEach(area => {
